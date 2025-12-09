@@ -1,6 +1,7 @@
 package com.yupi.yupicturebackend.controller;
 
 import com.yupi.yupicturebackend.common.BaseResponse;
+import com.yupi.yupicturebackend.common.DeleteRequest;
 import com.yupi.yupicturebackend.common.ResultUtils;
 import com.yupi.yupicturebackend.exception.ErrorCode;
 import com.yupi.yupicturebackend.exception.ThrowUtils;
@@ -52,6 +53,19 @@ public class NoteController {
         ThrowUtils.throwIf(noteUpdateRequest == null, ErrorCode.PARAMS_ERROR);
         User loginUser = userService.getLoginUser(request);
         boolean result = noteService.updateNote(noteUpdateRequest, loginUser);
+        return ResultUtils.success(result);
+    }
+
+    /**
+     * delete note
+     */
+    @PostMapping("/delete")
+    public BaseResponse<Boolean> deleteNote(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
+        if (deleteRequest == null || deleteRequest.getId() == null || deleteRequest.getId() <= 0) {
+            ThrowUtils.throwIf(true, ErrorCode.PARAMS_ERROR);
+        }
+        User loginUser = userService.getLoginUser(request);
+        boolean result = noteService.deleteNote(deleteRequest.getId(), loginUser);
         return ResultUtils.success(result);
     }
 

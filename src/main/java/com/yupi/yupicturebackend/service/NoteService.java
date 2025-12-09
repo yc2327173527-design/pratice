@@ -57,6 +57,15 @@ public interface NoteService extends IService<Note> {
     List<NoteVO> getNoteVOList(List<Note> noteList);
 
     /**
+     * delete own note (logical delete)
+     *
+     * @param noteId    note id
+     * @param loginUser operator
+     * @return result
+     */
+    boolean deleteNote(Long noteId, User loginUser);
+
+    /**
      * basic validation
      *
      * @param note entity

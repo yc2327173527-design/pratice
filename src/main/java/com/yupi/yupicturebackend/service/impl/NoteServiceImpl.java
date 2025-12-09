@@ -120,4 +120,17 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
             ThrowUtils.throwIf(note.getUserId() == null || note.getUserId() <= 0, ErrorCode.PARAMS_ERROR);
         }
     }
+
+    @Override
+    public boolean deleteNote(Long noteId, User loginUser) {
+        if (noteId == null || noteId <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        Note oldNote = this.getById(noteId);
+        ThrowUtils.throwIf(oldNote == null, ErrorCode.NOT_FOUND_ERROR);
+        ThrowUtils.throwIf(!oldNote.getUserId().equals(loginUser.getId()), ErrorCode.NO_AUTH_ERROR);
+        boolean result = this.removeById(noteId);
+        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
+        return true;
+    }
 }
