@@ -420,4 +420,15 @@ public class PictureController {
         return ResultUtils.success(task);
     }
 
+    /**
+     * 清空公共图库（仅管理员）
+     */
+    @PostMapping("/clear/public")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<Integer> clearPublicPictures(HttpServletRequest request) {
+        User loginUser = userService.getLoginUser(request);
+        int count = pictureService.clearPublicPictures(loginUser);
+        return ResultUtils.success(count);
+    }
+
 }

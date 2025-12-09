@@ -635,6 +635,32 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         return aliYunAiApi.createOutPaintingTask(createOutPaintingTaskRequest);
     }
 
+    @Override
+    public int clearPublicPictures(User loginUser) {
+        // 仅管理员可操作
+        if (loginUser == null || !userService.isAdmin(loginUser)) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
+        }
+        // 查询公共图库（spaceId 为空）的图片列表
+        List<Picture> publicPictures = this.lambdaQuery()
+                .isNull(Picture::getSpaceId)
+                .list();
+        if (CollUtil.isEmpty(publicPictures)) {
+            return 0;
+        }
+        // 记录数量
+        int removeCount = publicPictures.size();
+        // 先删除数据库记录（逻辑删除）
+        transactionTemplate.execute(status -> {
+            boolean removed = this.remove(new QueryWrapper<Picture>().isNull("spaceId"));
+            ThrowUtils.throwIf(!removed, ErrorCode.OPERATION_ERROR, "删除公共图库记录失败");
+            return null;
+        });
+        // 再删除 COS 资源（逐个清理原图和缩略图）
+        publicPictures.forEach(this::clearPictureFile);
+        return removeCount;
+    }
+
     /**
      * nameRule 格式：图片{序号}
      *

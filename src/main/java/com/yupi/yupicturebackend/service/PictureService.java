@@ -148,4 +148,12 @@ public interface PictureService extends IService<Picture> {
      * @param loginUser
      */
     CreateOutPaintingTaskResponse createPictureOutPaintingTask(CreatePictureOutPaintingTaskRequest createPictureOutPaintingTaskRequest, User loginUser);
+
+    /**
+     * 清空公共图库（spaceId 为空），同时删除 COS 资源
+     *
+     * @param loginUser 管理员
+     * @return 删除的图片数量
+     */
+    int clearPublicPictures(User loginUser);
 }
