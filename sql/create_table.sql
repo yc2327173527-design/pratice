@@ -117,6 +117,19 @@ create table if not exists space_user
     INDEX idx_userId (userId)                       -- 提升按用户查询的性能
 ) comment '空间用户关联' collate = utf8mb4_unicode_ci;
 
+-- 便签表
+create table if not exists note
+(
+    id         bigint auto_increment comment 'id' primary key,
+    content    text                               not null comment 'note content',
+    userId     bigint                             not null comment 'creator user id',
+    createTime datetime default CURRENT_TIMESTAMP not null comment 'create time',
+    editTime   datetime default CURRENT_TIMESTAMP not null comment 'edit time',
+    updateTime datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment 'update time',
+    isDelete   tinyint  default 0                 not null comment 'is deleted',
+    index idx_userId (userId)
+) comment 'note' collate = utf8mb4_unicode_ci;
+
 -- 扩展用户表：新增会员功能
 ALTER TABLE user
     ADD COLUMN vipExpireTime datetime NULL COMMENT '会员过期时间',
