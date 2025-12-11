@@ -430,5 +430,4 @@ public class PictureController {
         int count = pictureService.clearPublicPictures(loginUser);
         return ResultUtils.success(count);
     }
-
 }
